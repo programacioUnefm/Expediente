@@ -1,26 +1,25 @@
 <?php
 namespace App\Services;
-
-use App\Models\Estado;
+use App\Models\Municipio;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
-class EstadosService{
+class MunicipiosService{
   public function index()
   {
     try {
-      $estados = Estado::get();
-      $response = $estados->map(function ($estado) {
+      $municipios = Municipio::get();
+      $response = $municipios->map(function ($municipio) {
         return [
-          'id' => $estado->id,
-          'estado' => $estado->estado,
-          'pais_id' => $estado->pais_id,
-          'region' => $estado->region,
+          'id' => $municipio->id,
+          'municipio' => $municipio->municipio,
+          'capital' => $municipio->capital,
+          'estado_id' => $municipio->estado_id,
         ];
       });
       return [
         'responseCode' => 200,
-        'message' => 'Lista de estados',
+        'message' => 'Lista de municipios',
         'data' => $response
       ];
       
@@ -35,21 +34,41 @@ class EstadosService{
     
   }
 
+  public function results($nData)
+  {
+    try {
+      Log::info("Entro en el servicio");
+      $response = Municipio::paginate($nData);
+      return [
+        'responseCode' => 200,
+        'message' => 'Lista de municipios con paginacion',
+        'data' => $response
+      ];
+    } catch (Exception $error) {
+      Log::error("[Archivo: {$error->getFile()}] [Línea: {$error->getLine()}] Mensaje: {$error->getMessage()}");
+      return [
+        'responseCode' => 500,
+        'message' => 'Internal Server Error',
+        'data' => null
+      ];
+    }
+  }
+
   public function store($request)
   {
     try {
-      $estado = Estado::create([
-        'estado' => $request->estado,
-        'pais_id' => $request->pais_id,
-        'region' => $request->region,
+      $municipio = Municipio::create([
+        'municipio' => $request->municipio,
+        'capital' => $request->capital,
+        'estado_id' => $request->estado_id,
 
       ]);
-      $response['estado'] =  $estado->estado;
-      $response['pais_id'] = $estado->pais_id;
-      $response['region'] = $estado->region;
+      $response['municipio'] =  $municipio->municipio;
+      $response['capital'] = $municipio->capital;
+      $response['estado_id'] = $municipio->estado_id;
       return [
         'responseCode' => 200,
-        'message' => 'Estado Registrado',
+        'message' => 'Municipio Registrado',
         'data' => $response
       ];
       
@@ -67,15 +86,15 @@ class EstadosService{
   public function update($request,$id)
   {
     try {
-      $estado = Estado::find($id);
-      if (!$estado) {
+      $municipio = Municipio::find($id);
+      if (!$municipio) {
         return [
           'responseCode' => 404,
-          'message' => 'Estado no encontrado',
+          'message' => 'Municipio no encontrado',
           'data' => null
         ];
       }
-      $data = $request->only(['estado', 'pais_id','region']);
+      $data = $request->only(['municipio', 'capital','estado_id']);
       if(empty($data))
       {
         return [
@@ -84,12 +103,12 @@ class EstadosService{
           'data' => null
         ];
       }
-      $estado->fill($data);
-      $estado->save();
+      $municipio->fill($data);
+      $municipio->save();
       return [
         'responseCode' => 200,
-        'message' => 'Estado actualizado correctamente',
-        'data' => $estado
+        'message' => 'Municipio actualizado correctamente',
+        'data' => $municipio
       ];
     } catch (Exception $error) {
       Log::error("[Archivo: {$error->getFile()}] [Línea: {$error->getLine()}] Mensaje: {$error->getMessage()}");
@@ -105,19 +124,19 @@ class EstadosService{
   public function destroy($request,$id)
   {
     try {
-      $estado = Estado::find($id);
-      if (!$estado) {
+      $municipio = Municipio::find($id);
+      if (!$municipio) {
         return [
           'responseCode' => 404,
-          'message' => 'Estado no encontrado',
+          'message' => 'Municipio no encontrado',
           'data' => null
         ];
       }
-      $estado->delete();
+      $municipio->delete();
       return [
         'responseCode' => 200,
-        'message' => 'Estado eliminado',
-        'data' => $estado
+        'message' => 'Municipio eliminado',
+        'data' => $municipio
       ];
       
     } catch (Exception $error) {

@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\api\EstadosController;
+use App\Http\Controllers\api\MunicipiosController;
 use App\Http\Controllers\api\NivelProfesionalController;
 use App\Http\Controllers\api\PaisesController;
+use App\Http\Controllers\api\ParroquiasController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,4 +29,20 @@ Route::middleware(['verify.token'])->group(function () {
   Route::post('api/estados',[EstadosController::class,'store']);
   Route::put('api/estados/{id}', [EstadosController::class, 'update']);
   Route::delete('api/estados/{id}', [EstadosController::class, 'destroy']);
+});
+
+Route::middleware(['verify.token'])->group(function () {
+  Route::get('api/municipios',[MunicipiosController::class,'index']);
+  Route::post('api/municipios',[MunicipiosController::class,'store']);
+  Route::get('api/municipios/{nData}', [MunicipiosController::class, 'results']);
+  Route::put('api/municipios/{id}', [MunicipiosController::class, 'update']);
+  Route::delete('api/municipios/{id}', [MunicipiosController::class, 'destroy']);
+});
+
+Route::middleware(['verify.token'])->group(function () {
+  Route::get('api/parroquias',[ParroquiasController::class,'index']);
+  Route::post('api/parroquias',[ParroquiasController::class,'store']);
+  Route::get('api/parroquias/{nData}', [ParroquiasController::class, 'results']);
+  Route::put('api/parroquias/{id}', [ParroquiasController::class, 'update']);
+  Route::delete('api/parroquias/{id}', [ParroquiasController::class, 'destroy']);
 });

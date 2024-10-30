@@ -11,30 +11,30 @@ use Illuminate\Http\Request;
 class EstadosController extends Controller
 {
   private ResponseFormatter $handlingResponse;
-  private $estados;
+  private $estadoService;
 
-  public function __construct(ResponseFormatter $handlingResponse, EstadosService $estados)
+  public function __construct(ResponseFormatter $handlingResponse, EstadosService $estadoService)
   {
     $this->handlingResponse = $handlingResponse;
-    $this->estados = $estados;
+    $this->estadoService = $estadoService;
   }
 
   public function index(){
-    $response = $this->estados->index();
+    $response = $this->estadoService->index();
     return $this->handlingResponse->sendResponse($response['responseCode'], $response['message'], $response['data']);
   }
 
   public function store(EstadosRequest $request){
-    $response = $this->estados->store($request);
+    $response = $this->estadoService->store($request);
     return $this->handlingResponse->sendResponse($response['responseCode'], $response['message'], $response['data']);
   }
 
   public function update(EstadosRequest $request,$id){
-    $response = $this->estados->update($request,$id);
+    $response = $this->estadoService->update($request,$id);
     return $this->handlingResponse->sendResponse($response['responseCode'], $response['message'], $response['data']);
   }
   public function destroy(Request $request,$id){
-    $response = $this->estados->destroy($request,$id);
+    $response = $this->estadoService->destroy($request,$id);
     return $this->handlingResponse->sendResponse($response['responseCode'], $response['message'], $response['data']);
   }
 

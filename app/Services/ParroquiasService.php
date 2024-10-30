@@ -1,26 +1,24 @@
 <?php
 namespace App\Services;
-
-use App\Models\Estado;
+use App\Models\Parroquia;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
-class EstadosService{
+class ParroquiasService{
   public function index()
   {
     try {
-      $estados = Estado::get();
-      $response = $estados->map(function ($estado) {
+      $parroquias = Parroquia::get();
+      $response = $parroquias->map(function ($parroquia) {
         return [
-          'id' => $estado->id,
-          'estado' => $estado->estado,
-          'pais_id' => $estado->pais_id,
-          'region' => $estado->region,
+          'id' => $parroquia->id,
+          'parroquia' => $parroquia->parroquia,
+          'estado_id' => $parroquia->municipio_id,
         ];
       });
       return [
         'responseCode' => 200,
-        'message' => 'Lista de estados',
+        'message' => 'Lista de parroquias',
         'data' => $response
       ];
       
@@ -35,21 +33,38 @@ class EstadosService{
     
   }
 
+  public function results($nData)
+  {
+    try {
+      $response = Parroquia::paginate($nData);
+      return [
+        'responseCode' => 200,
+        'message' => 'Lista de parroquias con paginacion',
+        'data' => $response
+      ];
+    } catch (Exception $error) {
+      Log::error("[Archivo: {$error->getFile()}] [Línea: {$error->getLine()}] Mensaje: {$error->getMessage()}");
+      return [
+        'responseCode' => 500,
+        'message' => 'Internal Server Error',
+        'data' => null
+      ];
+    }
+  }
+
   public function store($request)
   {
     try {
-      $estado = Estado::create([
-        'estado' => $request->estado,
-        'pais_id' => $request->pais_id,
-        'region' => $request->region,
+      $parroquia = Parroquia::create([
+        'parroquia' => $request->parroquia,
+        'municipio_id' => $request->municipio_id,
 
       ]);
-      $response['estado'] =  $estado->estado;
-      $response['pais_id'] = $estado->pais_id;
-      $response['region'] = $estado->region;
+      $response['parroquia'] =  $parroquia->parroquia;
+      $response['municipio_id'] = $parroquia->municipio_id;
       return [
         'responseCode' => 200,
-        'message' => 'Estado Registrado',
+        'message' => 'Parroquia Registrada',
         'data' => $response
       ];
       
@@ -67,15 +82,15 @@ class EstadosService{
   public function update($request,$id)
   {
     try {
-      $estado = Estado::find($id);
-      if (!$estado) {
+      $parroquia = Parroquia::find($id);
+      if (!$parroquia) {
         return [
           'responseCode' => 404,
-          'message' => 'Estado no encontrado',
+          'message' => 'Parroquia no encontrado',
           'data' => null
         ];
       }
-      $data = $request->only(['estado', 'pais_id','region']);
+      $data = $request->only(['parroquia','municipio_id']);
       if(empty($data))
       {
         return [
@@ -84,12 +99,12 @@ class EstadosService{
           'data' => null
         ];
       }
-      $estado->fill($data);
-      $estado->save();
+      $parroquia->fill($data);
+      $parroquia->save();
       return [
         'responseCode' => 200,
-        'message' => 'Estado actualizado correctamente',
-        'data' => $estado
+        'message' => 'Parroquia actualizado correctamente',
+        'data' => $parroquia
       ];
     } catch (Exception $error) {
       Log::error("[Archivo: {$error->getFile()}] [Línea: {$error->getLine()}] Mensaje: {$error->getMessage()}");
@@ -105,19 +120,19 @@ class EstadosService{
   public function destroy($request,$id)
   {
     try {
-      $estado = Estado::find($id);
-      if (!$estado) {
+      $parroquia = Parroquia::find($id);
+      if (!$parroquia) {
         return [
           'responseCode' => 404,
-          'message' => 'Estado no encontrado',
+          'message' => 'Parroquia no encontrado',
           'data' => null
         ];
       }
-      $estado->delete();
+      $parroquia->delete();
       return [
         'responseCode' => 200,
-        'message' => 'Estado eliminado',
-        'data' => $estado
+        'message' => 'Parroquia eliminada',
+        'data' => $parroquia
       ];
       
     } catch (Exception $error) {
